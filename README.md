@@ -28,7 +28,7 @@ This project investigates CNN-based image classification to distinguish **tau je
 
 ---
 
-## 🧪 Dataset Details
+## Dataset Details
 
 - **Event generation**:
   - **MadGraph5_aMC@NLO** for parton-level events
