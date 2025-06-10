@@ -1,65 +1,96 @@
-# Tau Jet Classification Using Convolutional Neural Networks
+# 🧪 M.Sc. Project: Identifying Hadronically Decaying Tau Leptons Using Machine Learning
 
-This repository contains the full workflow and codebase for the classification of hadronically decaying tau jets vs. light quark jets in high-energy physics experiments using jet images and Convolutional Neural Networks (CNNs).
+This repository presents the complete workflow for classifying hadronically decaying tau jets versus light quark jets in high-energy physics using **jet image-based representation** and **Convolutional Neural Networks (CNNs)**. The analysis leverages simulated $e^+e^-$ collision events and evaluates performance across multiple center-of-mass energies.
 
 ---
 
 ## 📘 Project Overview
 
-Tau lepton identification is crucial for precision measurements and beyond-Standard Model searches at particle colliders. This project investigates the use of CNN-based image classification to distinguish hadronically decaying tau jets from light quark jets using simulated event data.
+**Tau lepton identification** is crucial for both **precision Standard Model (SM) measurements** and **searches for physics beyond the Standard Model (BSM)**.
 
-We construct jet images from final-state particles in $e^+e^- \to \tau^+\tau^-$ and $e^+e^- \to jj$ processes, process the data through a complete image pipeline, and train/test CNN models across various center-of-mass energies.
+A central motivation stems from **Higgs boson analyses**:
+- The Higgs decays to tau lepton pairs ($H \to \tau^+ \tau^-$) with a branching ratio of ~**6.3%**, making it a key channel for probing **Yukawa couplings**.
+- Hadronic tau decays, constituting ~**65%** of all tau decays, are challenging to isolate from quark-induced jets.
+- Effective tau tagging is critical for **$H \to \tau\tau$** reconstruction, as well as identifying **new physics signatures** involving tau leptons.
+
+This project investigates CNN-based image classification to distinguish **tau jets** from **light quark jets**, using simulated data from:
+- $e^+e^- \to \tau^+ \tau^-$ (tau jets)
+- $e^+e^- \to jj$ (light quark jets, $j = u,d,s,c,\bar{u},\bar{d},\bar{s},\bar{c}$)
 
 ---
 
-## 🎯 Goals
+## 🎯 Project Goals
 
-- Represent jets as 2D images in the $(\eta, \phi)$ plane.
-- Preprocess, normalize, and label simulated data for tau and quark jets.
-- Train and evaluate CNN classifiers to distinguish between tau and light-quark jets.
-- Test model generalization across different center-of-mass energies.
+- Construct jet images in the $(\eta, \phi)$ plane from final-state particles.
+- Apply a full preprocessing pipeline: centering, rotating, and normalizing.
+- Train CNN models to classify tau vs. quark jets.
+- Evaluate model generalization across various center-of-mass energies.
 
 ---
 
 ## 🧪 Dataset Details
 
-- **Generated using**:  
-  - MadGraph5_aMC@NLO for parton-level event generation  
-  - Pythia8 for hadronization  
-  - FastJet with anti-$k_T$ clustering (R=0.4)  
-- **Jet image shape**: $32 \times 32$, grayscale  
-- **Labeling**:  
-  - Tau jet = `1`  
-  - Quark jet = `0`  
-- **Datasets**:  
-  Simulated at $E_\text{cm} = 100$, $200$, and $300$ GeV with ~220k–240k jets per dataset.
+- **Event generation**:
+  - **MadGraph5_aMC@NLO** for parton-level events
+  - **Pythia8** for hadronization and decay
+  - **FastJet** with anti-$k_T$ algorithm (R = 0.4) for jet clustering
 
-- **Core jet images** are also created using a smaller radius (R=0.15) to highlight concentrated energy deposits.
+- **Jet images**:
+  - Format: $32 \times 32$ grayscale images
+  - Plane: $(\eta, \phi)$
+  - **Labels**:  
+    - Tau jet → `1`  
+    - Quark jet → `0`
+
+- **Energy configurations**:
+  - Center-of-mass energies: **100, 200, 300 GeV**
+  - Each dataset contains ~220k–240k jets
+
+- **Core jet images**:
+  - Also generated with **R = 0.15** to capture compact energy deposits
 
 ---
 
 ## 🧠 CNN Architecture
 
-Implemented using TensorFlow/Keras:
-- **4 convolutional blocks**:  
-  Each with Conv2D → BatchNorm → MaxPooling
-- **Fully connected head**:  
-  Flatten → Dense(128, ReLU) → Dropout(0.5) → Dense(1, Sigmoid)
+Developed using **TensorFlow / Keras**:
 
-Optimized with:
-- **Loss**: Binary Crossentropy  
-- **Metrics**: Accuracy, AUC, Precision, Recall  
-- **Learning rate scheduler**: Exponential decay  
-- **Class balancing**: Via `class_weight` during training
+- **Convolutional Backbone**:
+  - 4 blocks: `Conv2D → BatchNorm → MaxPooling`
+- **Classifier Head**:
+  - `Flatten → Dense(128, ReLU) → Dropout(0.5) → Dense(1, Sigmoid)`
+
+- **Training Config**:
+  - Loss: `BinaryCrossentropy`
+  - Metrics: `Accuracy`, `AUC`, `Precision`, `Recall`
+  - Optimizer: `Adam` with exponential learning rate decay
+  - Class imbalance handled using `class_weight`
 
 ---
 
 ## 📊 Results Summary
 
-- **Model 1 (Trained @ 100 GeV)**: High performance at 100 GeV, limited generalization to higher energies.
-- **Model 2 (Trained @ 200 GeV)**: Strong generalization across all test datasets, AUC up to 99.78%.
-- **Model 3 (Trained @ 300 GeV)**: Best performance overall, with consistent high efficiency and low mistag rate.
+- **Model A** (Trained @ 100 GeV):  
+  - High accuracy at 100 GeV, but limited generalization at higher energies.
 
-- Evaluation performed on test sets at 100, 150, 200, 250, 300, 350, and 400 GeV.
+- **Model B** (Trained @ 200 GeV):  
+  - Strong performance across multiple test sets with high AUC.
+
+- **Model C** (Trained @ 300 GeV):  
+  - Best overall classifier with AUC up to **99.78%** and consistent generalization.
+
+- **Evaluation Range**:  
+  - Test energies: 100, 150, 200, 250, 300, 350, 400 GeV  
+  - Performance includes: score distributions, ROC curves, tagging/mistagging vs $p_T$
 
 ---
+
+## 📂 Repository Structure
+
+```text
+├── LHE_Files/           # MadGraph-generated parton-level events
+├── Tau_Pipeline/        # Tau jet simulation and image generation
+├── JJ_Pipeline/         # Quark jet simulation and image processing
+├── NPY_Files/           # Saved jet image arrays and labels
+├── CNN_Model/           # CNN architecture, training, and evaluation scripts
+├── Results/             # Plots, metrics, and final performance evaluations
